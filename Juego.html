@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Robot Arena</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+    background:#07120c;
+    color:white;
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.screen{
+    position:absolute;
+    inset:0;
+    display:none;
+}
+
+.screen.active{
+    display:flex;
+}
+
+/* LOGIN */
+
+#loginScreen{
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(circle at center,#254d35 0,#0c2115 45%,#030705 100%);
+}
+
+.loginBox{
+    width:min(92%,430px);
+    padding:30px;
+    border-radius:24px;
+    background:rgba(10,20,14,.94);
+    border:1px solid #477856;
+    box-shadow:0 20px 70px #000;
+    text-align:center;
+}
+
+.logoRobot{
+    width:90px;
+    height:90px;
+    margin:0 auto 15px;
+    border-radius:22px;
+    background:linear-gradient(145deg,#bfc8cc,#41494d);
+    border:5px solid #222;
+    position:relative;
+    box-shadow:0 10px 30px #000;
+}
+
+.logoRobot:before,
+.logoRobot:after{
+    content:"";
+    position:absolute;
+    top:30px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#55ff9b;
+    box-shadow:0 0 12px #55ff9b;
+}
+
+.logoRobot:before{left:20px}
+.logoRobot:after{right:20px}
+
+.loginBox h1{
+    margin:8px 0;
+    font-size:34px;
+}
+
+.loginBox p{
+    color:#a9c4b1;
+}
+
+.loginBox input{
+    width:100%;
+    padding:15px;
+    margin:8px 0;
+    border-radius:12px;
+    border:1px solid #486650;
+    background:#101d14;
+    color:white;
+    outline:none;
+}
+
+.mainBtn{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    border-radius:12px;
+    background:#31b96f;
+    color:white;
+    font-weight:bold;
+}
+
+.mainBtn:active{
+    transform:scale(.97);
+}
+
+.message{
+    min-height:22px;
+    color:#ffbf6b;
+    margin-top:10px;
+}
+
+/* MENU */
+
+#menuScreen{
+    background:
+      radial-gradient(circle at 30% 20%,#315f3f,#07140b 55%);
+    padding:20px;
+    flex-direction:column;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.playerId{
+    padding:10px 14px;
+    border-radius:12px;
+    background:#071009dd;
+    border:1px solid #476b51;
+    font-size:13px;
+}
+
+.menuContent{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.menuCard{
+    width:min(95%,850px);
+    min-height:470px;
+    padding:30px;
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:30px;
+    background:rgba(5,15,9,.88);
+    border:1px solid #456f4d;
+    border-radius:25px;
+    box-shadow:0 20px 80px #000;
+}
+
+.hero{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.hero h2{
+    font-size:30px;
+    margin-bottom:30px;
+}
+
+.bigRobot{
+    width:160px;
+    height:210px;
+    position:relative;
+    filter:drop-shadow(0 20px 15px #000);
+}
+
+.robotHead{
+    width:105px;
+    height:80px;
+    background:linear-gradient(145deg,#d8e0e2,#626b70);
+    border:6px solid #222;
+    border-radius:22px;
+    position:absolute;
+    top:0;
+    left:27px;
+}
+
+.robotEye{
+    position:absolute;
+    top:28px;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:#52ff9c;
+    box-shadow:0 0 18px #52ff9c;
+}
+
+.eye1{left:20px}
+.eye2{right:20px}
+
+.robotBody{
+    position:absolute;
+    top:75px;
+    left:35px;
+    width:90px;
+    height:110px;
+    border-radius:20px;
+    background:linear-gradient(145deg,#9ba5aa,#30383c);
+    border:6px solid #222;
+}
+
+.robotArm{
+    position:absolute;
+    width:30px;
+    height:100px;
+    background:#626c70;
+    border:5px solid #222;
+    border-radius:15px;
+    top:85px;
+}
+
+.arm1{left:5px;transform:rotate(8deg)}
+.arm2{right:0;transform:rotate(-10deg)}
+
+.gun{
+    position:absolute;
+    right:-42px;
+    top:128px;
+    width:70px;
+    height:20px;
+    background:#171b1d;
+    border:4px solid #050505;
+    border-radius:5px;
+}
+
+.sidePanel{
+    background:#0b1710;
+    border:1px solid #34543b;
+    border-radius:18px;
+    padding:20px;
+}
+
+.sidePanel h3{
+    margin-top:0;
+}
+
+.sidePanel input{
+    width:100%;
+    padding:13px;
+    background:#101d14;
+    color:white;
+    border:1px solid #49674f;
+    border-radius:10px;
+    margin-bottom:8px;
+}
+
+.sidePanel button{
+    width:100%;
+    padding:13px;
+    border-radius:10px;
+    margin:5px 0;
+    background:#245f3b;
+    color:white;
+    font-weight:bold;
+}
+
+.friendStatus{
+    min-height:50px;
+    padding:8px;
+    font-size:13px;
+    color:#9fbca6;
+}
+
+/* GAME */
+
+#gameScreen{
+    background:#16291b;
+}
+
+#gameCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+    touch-action:none;
+}
+
+.hud{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.healthBox{
+    position:absolute;
+    left:15px;
+    top:15px;
+    width:220px;
+}
+
+.healthText{
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+.healthBar{
+    height:18px;
+    border:2px solid #111;
+    background:#351010;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.healthFill{
+    height:100%;
+    width:100%;
+    background:#39d477;
+    transition:width .15s;
+}
+
+.enemyHealth{
+    position:absolute;
+    right:15px;
+    top:15px;
+    width:220px;
+    text-align:right;
+}
+
+.enemyBar{
+    height:18px;
+    border:2px solid #111;
+    background:#351010;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.enemyFill{
+    height:100%;
+    width:100%;
+    background:#ef5454;
+    transition:width .15s;
+}
+
+.skillArea{
+    position:absolute;
+    right:20px;
+    bottom:25px;
+    pointer-events:auto;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    align-items:flex-end;
+}
+
+.skillButton,
+.shootButton{
+    border-radius:50%;
+    color:white;
+    font-weight:bold;
+    box-shadow:0 8px 20px #0009;
+}
+
+.shootButton{
+    width:90px;
+    height:90px;
+    background:#c33a3a;
+    font-size:14px;
+}
+
+.skillButton{
+    width:115px;
+    height:50px;
+    border-radius:15px;
+    background:#8253d8;
+}
+
+.skillButton.cooldown{
+    background:#3c344b;
+    color:#aaa;
+}
+
+.touchMove{
+    position:absolute;
+    left:20px;
+    bottom:25px;
+    width:150px;
+    height:150px;
+    pointer-events:auto;
+}
+
+.moveBtn{
+    position:absolute;
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:#ffffff24;
+    border:1px solid #ffffff50;
+    color:white;
+    font-weight:bold;
+}
+
+.up{left:51px;top:0}
+.down{left:51px;bottom:0}
+.left{left:0;top:51px}
+.right{right:0;top:51px}
+
+.dashButton{
+    position:absolute;
+    left:190px;
+    bottom:40px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:#3e87d8;
+    color:white;
+    pointer-events:auto;
+}
+
+.jumpButton{
+    position:absolute;
+    left:270px;
+    bottom:40px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:#d59c37;
+    color:white;
+    pointer-events:auto;
+}
+
+.debugCode{
+    position:absolute;
+    right:12px;
+    top:72px;
+    width:22px;
+    height:22px;
+    border-radius:4px;
+    background:#ffffff22;
+    pointer-events:auto;
+}
+
+.codePanel{
+    position:absolute;
+    right:15px;
+    top:105px;
+    width:220px;
+    padding:12px;
+    background:#09110b;
+    border:1px solid #52725a;
+    border-radius:12px;
+    pointer-events:auto;
+    display:none;
+}
+
+.codePanel.show{
+    display:block;
+}
+
+.codePanel input{
+    width:100%;
+    padding:8px;
+    background:#101a13;
+    color:white;
+    border:1px solid #45654d;
+    border-radius:8px;
+}
+
+.codePanel button{
+    width:100%;
+    margin-top:7px;
+    padding:9px;
+    border-radius:8px;
+    background:#31a86a;
+    color:white;
+}
+
+.specialUses{
+    color:#9bd9ad;
+    font-size:12px;
+}
+
+.resultOverlay{
+    position:absolute;
+    inset:0;
+    background:#000a;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    pointer-events:auto;
+}
+
+.resultOverlay.show{
+    display:flex;
+}
+
+.resultBox{
+    width:min(90%,400px);
+    padding:30px;
+    text-align:center;
+    background:#0b170e;
+    border:1px solid #507957;
+    border-radius:20px;
+}
+
+.resultBox button{
+    padding:14px 30px;
+    background:#32b86f;
+    color:white;
+    border-radius:10px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:750px){
+    .menuCard{
+        grid-template-columns:1fr;
+        overflow:auto;
+        max-height:90vh;
+    }
+
+    .sidePanel{
+        order:2;
+    }
+
+    .hero{
+        min-height:320px;
+    }
+
+    .healthBox,
+    .enemyHealth{
+        width:150px;
+    }
+
+    .dashButton{
+        left:185px;
+    }
+
+    .jumpButton{
+        left:260px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<section id="loginScreen" class="screen active">
+    <div class="loginBox">
+
+        <div class="logoRobot"></div>
+
+        <h1>ROBOT ARENA</h1>
+        <p>Combate 1 vs 1 · 2.5D</p>
+
+        <input id="emailInput"
+               type="email"
+               placeholder="Correo electrónico">
+
+        <input id="passwordInput"
+               type="password"
+               placeholder="Ingresar una contraseña">
+
+        <button class="mainBtn" id="loginBtn">
+            IR A LA PÁGINA PRINCIPAL
+        </button>
+
+        <div id="loginMessage" class="message"></div>
+
+    </div>
+</section>
+
+
+<!-- MENU -->
+
+<section id="menuScreen" class="screen">
+
+    <div class="topbar">
+
+        <div>
+            <strong>ROBOT ARENA</strong>
+        </div>
+
+        <div class="playerId">
+            ID: <span id="myId">---</span>
+        </div>
+
+    </div>
+
+    <div class="menuContent">
+
+        <div class="menuCard">
+
+            <div class="hero">
+
+                <h2>Tu Robot</h2>
+
+                <div class="bigRobot">
+
+                    <div class="robotHead">
+                        <div class="robotEye eye1"></div>
+                        <div class="robotEye eye2"></div>
+                    </div>
+
+                    <div class="robotBody"></div>
+
+                    <div class="robotArm arm1"></div>
+                    <div class="robotArm arm2"></div>
+
+                    <div class="gun"></div>
+
+                </div>
+
+            </div>
+
+            <div class="sidePanel">
+
+                <h3>Jugar</h3>
+
+                <button id="randomBtn">
+                    ⚔ JUGAR UNO VS UNO
+                </button>
+
+                <button id="botBtn">
+                    🤖 JUGAR CONTRA BOT
+                </button>
+
+                <hr>
+
+                <h3>Agregar amigo</h3>
+
+                <input id="friendIdInput"
+                       placeholder="Escribe ID de un amigo">
+
+                <button id="friendBtn">
+                    ENVIAR SOLICITUD
+                </button>
+
+                <div id="friendStatus"
+                     class="friendStatus">
+                    Ninguna solicitud pendiente.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- GAME -->
+
+<section id="gameScreen" class="screen">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="hud">
+
+        <div class="healthBox">
+
+            <div class="healthText">
+                TU VIDA:
+                <span id="myHealthText">15000</span>
+            </div>
+
+            <div class="healthBar">
+                <div id="myHealthFill"
+                     class="healthFill"></div>
+            </div>
+
+        </div>
+
+
+        <div class="enemyHealth">
+
+            <div class="healthText">
+                ENEMIGO:
+                <span id="enemyHealthText">15000</span>
+            </div>
+
+            <div class="enemyBar">
+                <div id="enemyHealthFill"
+                     class="enemyFill"></div>
+            </div>
+
+        </div>
+
+
+        <div class="touchMove">
+
+            <button class="moveBtn up"
+                    data-key="forward">▲</button>
+
+            <button class="moveBtn down"
+                    data-key="back">▼</button>
+
+            <button class="moveBtn left"
+                    data-key="left">◀</button>
+
+            <button class="moveBtn right"
+                    data-key="right">▶</button>
+
+        </div>
+
+
+        <button class="dashButton" id="dashBtn">
+            DASH
+        </button>
+
+        <button class="jumpButton" id="jumpBtn">
+            SALTAR
+        </button>
+
+
+        <div class="skillArea">
+
+            <button id="skillBtn"
+                    class="skillButton">
+                HABILIDAD
+            </button>
+
+            <button id="shootBtn"
+                    class="shootButton">
+                DISPARAR
+            </button>
+
+        </div>
+
+
+        <button id="debugCode"
+                class="debugCode">
+        </button>
+
+
+        <div id="codePanel"
+             class="codePanel">
+
+            <input id="secretInput"
+                   maxlength="6"
+                   placeholder="Código">
+
+            <button id="secretButton">
+                USAR HABILIDAD ESPECIAL
+            </button>
+
+            <div class="specialUses">
+                Usos restantes:
+                <span id="specialUses">5</span>
+            </div>
+
+        </div>
+
+
+        <div id="resultOverlay"
+             class="resultOverlay">
+
+            <div class="resultBox">
+
+                <h1 id="resultTitle">
+                    FIN
+                </h1>
+
+                <p id="resultText"></p>
+
+                <button id="returnMenuBtn">
+                    VOLVER AL MENÚ
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+/* =========================================================
+   ROBOT ARENA
+   CLIENTE
+========================================================= */
+
+const socket = io();
+
+const MAX_HP = 15000;
+const NORMAL_DAMAGE = 1000;
+const SKILL_DAMAGE = 3000;
+const NORMAL_RANGE = 2;
+const SKILL_COOLDOWN = 13000;
+
+let myId = null;
+let gameMode = null;
+let enemy = null;
+let gameActive = false;
+
+let myPlayer = {
+    x: 0,
+    z: 0,
+    y: 0,
+    hp: MAX_HP,
+    rotation: 0
+};
+
+let enemyPlayer = {
+    x: 3,
+    z: 0,
+    y: 0,
+    hp: MAX_HP,
+    rotation: 0
+};
+
+let skillReady = true;
+let skillTimer = 0;
+
+let specialUses = 5;
+
+let secretClickCount = 0;
+let secretClickTimer = null;
+
+const keys = {};
+
+const loginScreen = document.getElementById("loginScreen");
+const menuScreen = document.getElementById("menuScreen");
+const gameScreen = document.getElementById("gameScreen");
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+function showScreen(screen){
+
+    document.querySelectorAll(".screen")
+        .forEach(s => s.classList.remove("active"));
+
+    screen.classList.add("active");
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+document.getElementById("loginBtn").onclick = () => {
+
+    const email =
+        document.getElementById("emailInput").value.trim();
+
+    const password =
+        document.getElementById("passwordInput").value;
+
+    const msg =
+        document.getElementById("loginMessage");
+
+    if(!email.includes("@")){
+        msg.textContent =
+            "Escribe un correo electrónico válido.";
+        return;
+    }
+
+    if(password.length < 4){
+        msg.textContent =
+            "La contraseña debe tener al menos 4 caracteres.";
+        return;
+    }
+
+    socket.emit("register",{
+        email,
+        password
+    });
+};
+
+
+/* =========================================================
+   SOCKET
+========================================================= */
+
+socket.on("registered",data => {
+
+    myId = data.id;
+
+    document.getElementById("myId")
+        .textContent = myId;
+
+    showScreen(menuScreen);
+});
+
+
+socket.on("registerError",msg => {
+
+    document.getElementById("loginMessage")
+        .textContent = msg;
+
+});
+
+
+socket.on("friendStatus",msg => {
+
+    document.getElementById("friendStatus")
+        .textContent = msg;
+
+});
+
+
+socket.on("friendRequest",data => {
+
+    const accept =
+        confirm(
+            "Solicitud de amistad de " +
+            data.from +
+            ". ¿Aceptar?"
+        );
+
+    socket.emit("friendResponse",{
+        from:data.from,
+        accepted:accept
+    });
+
+});
+
+
+socket.on("matchFound",data => {
+
+    gameMode = "online";
+
+    myPlayer = {
+        x:data.me.x,
+        z:data.me.z,
+        y:0,
+        hp:MAX_HP,
+        rotation:0
+    };
+
+    enemyPlayer = {
+        x:data.enemy.x,
+        z:data.enemy.z,
+        y:0,
+        hp:MAX_HP,
+        rotation:0
+    };
+
+    enemy = data.enemy.id;
+
+    startGame();
+
+});
+
+
+socket.on("botMatch",data => {
+
+    gameMode = "bot";
+
+    myPlayer = {
+        x:-3,
+        z:0,
+        y:0,
+        hp:MAX_HP,
+        rotation:0
+    };
+
+    enemyPlayer = {
+        x:3,
+        z:0,
+        y:0,
+        hp:MAX_HP,
+        rotation:Math.PI
+    };
+
+    enemy = "BOT";
+
+    startGame();
+
+});
+
+
+socket.on("state",data => {
+
+    if(!gameActive) return;
+
+    if(data.players && data.players[myId]){
+
+        const p = data.players[myId];
+
+        myPlayer.x = p.x;
+        myPlayer.z = p.z;
+        myPlayer.y = p.y;
+        myPlayer.hp = p.hp;
+        myPlayer.rotation = p.rotation;
+
+    }
+
+    if(data.players && enemy && data.players[enemy]){
+
+        const p = data.players[enemy];
+
+        enemyPlayer.x = p.x;
+        enemyPlayer.z = p.z;
+        enemyPlayer.y = p.y;
+        enemyPlayer.hp = p.hp;
+        enemyPlayer.rotation = p.rotation;
+
+    }
+
+    updateHUD();
+
+});
+
+
+socket.on("damage",data => {
+
+    if(data.target === myId){
+
+        myPlayer.hp = Math.max(
+            0,
+            myPlayer.hp - data.amount
+        );
+
+    }
+
+    if(data.target === enemy){
+
+        enemyPlayer.hp = Math.max(
+            0,
+            enemyPlayer.hp - data.amount
+        );
+
+    }
+
+    updateHUD();
+
+});
+
+
+socket.on("gameOver",data => {
+
+    finishGame(
+        data.winner === myId
+            ? "¡VICTORIA!"
+            : "DERROTA"
+    );
+
+});
+
+
+socket.on("errorMessage",msg => {
+    alert(msg);
+});
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+document.getElementById("randomBtn").onclick = () => {
+
+    socket.emit("findRandomMatch");
+
+};
+
+
+document.getElementById("botBtn").onclick = () => {
+
+    socket.emit("startBot");
+
+};
+
+
+document.getElementById("friendBtn").onclick = () => {
+
+    const id =
+        document.getElementById("friendIdInput")
+            .value.trim()
+            .toUpperCase();
+
+    if(!id){
+        return;
+    }
+
+    socket.emit("friendRequest",{
+        target:id
+    });
+
+};
+
+
+/* =========================================================
+   GAME START
+========================================================= */
+
+function startGame(){
+
+    showScreen(gameScreen);
+
+    gameActive = true;
+
+    skillReady = true;
+    skillTimer = 0;
+
+    specialUses = 5;
+
+    document.getElementById("specialUses")
+        .textContent = specialUses;
+
+    resizeCanvas();
+
+    updateHUD();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+function finishGame(text){
+
+    if(!gameActive) return;
+
+    gameActive = false;
+
+    document.getElementById("resultTitle")
+        .textContent = text;
+
+    document.getElementById("resultText")
+        .textContent =
+            "La partida ha terminado.";
+
+    document.getElementById("resultOverlay")
+        .classList.add("show");
+
+}
+
+
+document.getElementById("returnMenuBtn").onclick = () => {
+
+    document.getElementById("resultOverlay")
+        .classList.remove("show");
+
+    socket.emit("leaveMatch");
+
+    showScreen(menuScreen);
+
+};
+
+
+/* =========================================================
+   MOVIMIENTO
+========================================================= */
+
+document.addEventListener("keydown",e => {
+
+    keys[e.key.toLowerCase()] = true;
+
+});
+
+document.addEventListener("keyup",e => {
+
+    keys[e.key.toLowerCase()] = false;
+
+});
+
+
+function movementLoop(){
+
+    if(!gameActive) return;
+
+    let dx = 0;
+    let dz = 0;
+
+    if(keys["w"] || keys["arrowup"])
+        dz -= .09;
+
+    if(keys["s"] || keys["arrowdown"])
+        dz += .09;
+
+    if(keys["a"] || keys["arrowleft"])
+        dx -= .09;
+
+    if(keys["d"] || keys["arrowright"])
+        dx += .09;
+
+    if(dx || dz){
+
+        myPlayer.x += dx;
+        myPlayer.z += dz;
+
+        myPlayer.x =
+            Math.max(-7,Math.min(7,myPlayer.x));
+
+        myPlayer.z =
+            Math.max(-7,Math.min(7,myPlayer.z));
+
+        socket.emit("move",{
+            x:myPlayer.x,
+            z:myPlayer.z,
+            y:myPlayer.y,
+            rotation:myPlayer.rotation
+        });
+
+    }
+
+}
+
+setInterval(movementLoop,30);
+
+
+/* =========================================================
+   TOUCH MOVEMENT
+========================================================= */
+
+document.querySelectorAll(".moveBtn")
+.forEach(button => {
+
+    const key =
+        button.dataset.key;
+
+    function start(e){
+
+        e.preventDefault();
+
+        if(key === "forward")
+            keys["w"] = true;
+
+        if(key === "back")
+            keys["s"] = true;
+
+        if(key === "left")
+            keys["a"] = true;
+
+        if(key === "right")
+            keys["d"] = true;
+
+    }
+
+    function stop(e){
+
+        e.preventDefault();
+
+        if(key === "forward")
+            keys["w"] = false;
+
+        if(key === "back")
+            keys["s"] = false;
+
+        if(key === "left")
+            keys["a"] = false;
+
+        if(key === "right")
+            keys["d"] = false;
+
+    }
+
+    button.addEventListener("touchstart",start);
+    button.addEventListener("touchend",stop);
+
+    button.addEventListener("mousedown",start);
+    button.addEventListener("mouseup",stop);
+
+});
+
+
+/* =========================================================
+   DASH
+========================================================= */
+
+document.getElementById("dashBtn").onclick = () => {
+
+    if(!gameActive) return;
+
+    let dx = 0;
+    let dz = -1;
+
+    if(keys["s"])
+        dz = 1;
+
+    if(keys["a"])
+        dx = -1;
+
+    if(keys["d"])
+        dx = 1;
+
+    myPlayer.x += dx * 1.2;
+    myPlayer.z += dz * 1.2;
+
+    myPlayer.x =
+        Math.max(-7,Math.min(7,myPlayer.x));
+
+    myPlayer.z =
+        Math.max(-7,Math.min(7,myPlayer.z));
+
+    socket.emit("move",{
+        x:myPlayer.x,
+        z:myPlayer.z,
+        y:myPlayer.y,
+        rotation:myPlayer.rotation
+    });
+
+};
+
+
+/* =========================================================
+   JUMP
+========================================================= */
+
+document.getElementById("jumpBtn").onclick = () => {
+
+    if(!gameActive) return;
+
+    if(myPlayer.y === 0){
+
+        myPlayer.y = 1;
+
+        socket.emit("move",{
+            x:myPlayer.x,
+            z:myPlayer.z,
+            y:myPlayer.y,
+            rotation:myPlayer.rotation
+        });
+
+        setTimeout(() => {
+
+            myPlayer.y = 0;
+
+            socket.emit("move",{
+                x:myPlayer.x,
+                z:myPlayer.z,
+                y:0,
+                rotation:myPlayer.rotation
+            });
+
+        },500);
+
+    }
+
+};
+
+
+/* =========================================================
+   SHOOT
+========================================================= */
+
+document.getElementById("shootBtn").onclick = () => {
+
+    if(!gameActive) return;
+
+    socket.emit("shoot",{
+        range:NORMAL_RANGE,
+        damage:NORMAL_DAMAGE
+    });
+
+};
+
+
+/* =========================================================
+   SKILL
+========================================================= */
+
+document.getElementById("skillBtn").onclick = () => {
+
+    if(!gameActive) return;
+
+    if(!skillReady) return;
+
+    skillReady = false;
+
+    skillTimer = SKILL_COOLDOWN;
+
+    socket.emit("skill",{
+        damage:SKILL_DAMAGE,
+        projectiles:13
+    });
+
+    const interval =
+        setInterval(() => {
+
+            skillTimer -= 1000;
+
+            if(skillTimer <= 0){
+
+                clearInterval(interval);
+
+                skillReady = true;
+
+                document.getElementById("skillBtn")
+                    .textContent = "HABILIDAD";
+
+                document.getElementById("skillBtn")
+                    .classList.remove("cooldown");
+
+            }else{
+
+                document.getElementById("skillBtn")
+                    .textContent =
+                    "RECARGA " +
+                    Math.ceil(skillTimer/1000) +
+                    "s";
+
+            }
+
+        },1000);
+
+};
+
+
+/* =========================================================
+   SECRET CODE
+========================================================= */
+
+document.getElementById("debugCode").onclick = () => {
+
+    secretClickCount++;
+
+    clearTimeout(secretClickTimer);
+
+    secretClickTimer =
+        setTimeout(() => {
+            secretClickCount = 0;
+        },700);
+
+    if(secretClickCount >= 3){
+
+        document.getElementById("codePanel")
+            .classList.add("show");
+
+        secretClickCount = 0;
+
+    }
+
+};
+
+
+document.getElementById("secretButton").onclick = () => {
+
+    const code =
+        document.getElementById("secretInput")
+            .value.trim();
+
+    if(code !== "733054"){
+
+        alert("Código incorrecto.");
+
+        return;
+    }
+
+    if(specialUses <= 0){
+
+        alert("Ya utilizaste los 5 usos.");
+
+        return;
+    }
+
+    specialUses--;
+
+    myPlayer.hp = MAX_HP;
+
+    skillReady = true;
+
+    skillTimer = 0;
+
+    socket.emit("special",{
+        code:"733054"
+    });
+
+    updateHUD();
+
+    document.getElementById("specialUses")
+        .textContent = specialUses;
+
+};
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+    const hp =
+        Math.max(0,myPlayer.hp);
+
+    const enemyHp =
+        Math.max(0,enemyPlayer.hp);
+
+    document.getElementById("myHealthText")
+        .textContent = Math.round(hp);
+
+    document.getElementById("enemyHealthText")
+        .textContent = Math.round(enemyHp);
+
+    document.getElementById("myHealthFill")
+        .style.width =
+        (hp/MAX_HP*100)+"%";
+
+    document.getElementById("enemyHealthFill")
+        .style.width =
+        (enemyHp/MAX_HP*100)+"%";
+
+}
+
+
+/* =========================================================
+   2.5D RENDER
+========================================================= */
+
+function resizeCanvas(){
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+
+function project(x,z,y){
+
+    const cx = canvas.width/2;
+    const cy = canvas.height/2;
+
+    const scale =
+        Math.min(
+            canvas.width,
+            canvas.height
+        ) / 18;
+
+    return {
+        x:cx + (x-z)*scale*.72,
+        y:cy + (x+z)*scale*.30 - y*scale
+    };
+
+}
+
+
+function drawArena(){
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0,0,w,h);
+
+    /* cielo */
+
+    const gradient =
+        ctx.createLinearGradient(0,0,0,h);
+
+    gradient.addColorStop(0,"#244a31");
+    gradient.addColorStop(1,"#08130b");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,w,h);
+
+    /* suelo */
+
+    const center =
+        project(0,0,0);
+
+    ctx.fillStyle="#315f37";
+
+    ctx.beginPath();
+
+    ctx.moveTo(center.x,center.y-300);
+
+    ctx.lineTo(center.x+450,center.y);
+
+    ctx.lineTo(center.x,center.y+300);
+
+    ctx.lineTo(center.x-450,center.y);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+    /* líneas del suelo */
+
+    ctx.strokeStyle="#4b784e";
+    ctx.globalAlpha=.35;
+
+    for(let i=-7;i<=7;i++){
+
+        const a=project(i,-7,0);
+        const b=project(i,7,0);
+
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+        ctx.stroke();
+
+        const c=project(-7,i,0);
+        const d=project(7,i,0);
+
+        ctx.beginPath();
+        ctx.moveTo(c.x,c.y);
+        ctx.lineTo(d.x,d.y);
+        ctx.stroke();
+
+    }
+
+    ctx.globalAlpha=1;
+
+    /* árboles */
+
+    for(let i=-7;i<=7;i+=2){
+
+        drawTree(
+            project(i,-7,0)
+        );
+
+        drawTree(
+            project(i,7,0)
+        );
+
+    }
+
+    for(let i=-5;i<=5;i+=3){
+
+        drawTree(
+            project(-7,i,0)
+        );
+
+        drawTree(
+            project(7,i,0)
+        );
+
+    }
+
+}
+
+
+function drawTree(p){
+
+    ctx.fillStyle="#493523";
+
+    ctx.fillRect(
+        p.x-8,
+        p.y-65,
+        16,
+        65
+    );
+
+    ctx.fillStyle="#174b28";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        p.x,
+        p.y-70,
+        35,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#236b35";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        p.x-18,
+        p.y-55,
+        25,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+}
+
+
+function drawRobot(p,isEnemy){
+
+    ctx.save();
+
+    ctx.translate(p.x,p.y);
+
+    const scale = 1.1;
+
+    ctx.scale(scale,scale);
+
+    /* sombra */
+
+    ctx.fillStyle="#0008";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        4,
+        35,
+        10,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /* piernas */
+
+    ctx.fillStyle="#444c50";
+
+    ctx.fillRect(-23,-52,18,45);
+    ctx.fillRect(5,-52,18,45);
+
+    /* cuerpo */
+
+    ctx.fillStyle =
+        isEnemy ? "#8c3f3f" : "#777f83";
+
+    ctx.strokeStyle="#111";
+    ctx.lineWidth=5;
+
+    ctx.fillRect(-35,-125,70,75);
+    ctx.strokeRect(-35,-125,70,75);
+
+    /* cabeza */
+
+    ctx.fillStyle="#b5bdc0";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        -42,
+        -175,
+        84,
+        60,
+        14
+    );
+
+    ctx.fill();
+    ctx.stroke();
+
+    /* ojos */
+
+    ctx.fillStyle="#55ff9c";
+
+    ctx.beginPath();
+    ctx.arc(-20,-145,7,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(20,-145,7,0,Math.PI*2);
+    ctx.fill();
+
+    /* brazo arma */
+
+    ctx.fillStyle="#555d61";
+
+    ctx.fillRect(30,-105,55,15);
+
+    ctx.fillStyle="#181b1d";
+
+    ctx.fillRect(75,-110,45,25);
+
+    ctx.restore();
+
+}
+
+
+function gameLoop(){
+
+    if(!gameActive) return;
+
+    drawArena();
+
+    const me =
+        project(
+            myPlayer.x,
+            myPlayer.z,
+            myPlayer.y
+        );
+
+    const en =
+        project(
+            enemyPlayer.x,
+            enemyPlayer.z,
+            enemyPlayer.y
+        );
+
+    /* ordenar por profundidad */
+
+    if(myPlayer.x + myPlayer.z <
+       enemyPlayer.x + enemyPlayer.z){
+
+        drawRobot(me,false);
+        drawRobot(en,true);
+
+    }else{
+
+        drawRobot(en,true);
+        drawRobot(me,false);
+
+    }
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+</script>
+
+</body>
+  </html>
