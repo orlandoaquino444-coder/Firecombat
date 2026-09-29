@@ -1,0 +1,13 @@
+{
+  "name": "robot-arena-25d",
+  "version": "1.0.0",
+  "description": "Juego original 2.5D de combate 1 vs 1",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  }
+}
